@@ -140,6 +140,7 @@ export function spring<T=any>(value?: T, opts: SpringOpts = {}): Spring<T> {
 		set,
 		update: (fn, opts: SpringUpdateOpts) => set(fn(target_value, value), opts),
 		subscribe: store.subscribe,
+		get: store.get,
 		stiffness,
 		damping,
 		precision

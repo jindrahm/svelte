@@ -138,6 +138,7 @@ export function tweened<T>(value?: T, defaults: Options<T> = {}): Tweened<T> {
 	return {
 		set,
 		update: (fn, opts?: Options<T>) => set(fn(target_value, value), opts),
-		subscribe: store.subscribe
+		subscribe: store.subscribe,
+		get: store.get
 	};
 }

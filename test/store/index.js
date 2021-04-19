@@ -372,4 +372,38 @@ describe('store', () => {
 			assert.equal(get(fake_observable), 42);
 		});
 	});
+
+	describe('direct get', () => {
+		it('gets the current value of a readable store', () => {
+			const store = readable(42, () => { });
+			assert.equal(store.get(), 42);
+		});
+
+		it('gets the current value of a writable store', () => {
+			const store = writable(1);
+			const values = [];
+
+			values.push(store.get());
+			store.set(2);
+			values.push(store.get());
+			store.update(value => value * value);
+			values.push(store.get());
+
+			assert.deepEqual(values, [1, 2, 4]);
+		});
+
+		it('gets the current value of a derived store', () => {
+			const store = writable(2);
+			const derivedStore = derived(store, $store => $store * $store);
+			const values = [];
+
+			values.push(derivedStore.get());
+			store.set(3);
+			values.push(derivedStore.get());
+			store.update(value => value * value);
+			values.push(derivedStore.get());
+
+			assert.deepEqual(values, [4, 9, 81]);
+		});
+	});
 });

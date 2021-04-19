@@ -23,6 +23,11 @@ export interface Readable<T> {
 	 * @param invalidate cleanup callback
 	 */
 	subscribe(this: void, run: Subscriber<T>, invalidate?: Invalidator<T>): Unsubscriber;
+
+	/**
+	 * Get the current value.
+	 */
+	get(this: void): T;
 }
 
 /** Writable interface for both updating and subscribing. */
@@ -51,8 +56,11 @@ const subscriber_queue = [];
  * @param {StartStopNotifier}start start and stop notifications for subscriptions
  */
 export function readable<T>(value: T, start: StartStopNotifier<T>): Readable<T> {
+	const store = writable(value, start);
+
 	return {
-		subscribe: writable(value, start).subscribe
+		subscribe: store.subscribe,
+		get: store.get
 	};
 }
 
@@ -85,6 +93,10 @@ export function writable<T>(value: T, start: StartStopNotifier<T> = noop): Writa
 		}
 	}
 
+	function get(): T {
+		return value;
+	}
+
 	function update(fn: Updater<T>): void {
 		set(fn(value));
 	}
@@ -109,7 +121,7 @@ export function writable<T>(value: T, start: StartStopNotifier<T> = noop): Writa
 		};
 	}
 
-	return { set, update, subscribe };
+	return { set, update, subscribe, get };
 }
 
 /** One or more `Readable`s. */

@@ -253,11 +253,13 @@ store = writable(value: any, (set: (value: any) => void) => () => void)
 
 ---
 
-Function that creates a store which has values that can be set from 'outside' components. It gets created as an object with additional `set` and `update` methods.
+Function that creates a store which has values that can be set from 'outside' components. It gets created as an object with additional `set`, `update` and `get` methods.
 
 `set` is a method that takes one argument which is the value to be set. The store value gets set to the value of the argument if the store value is not already equal to it.
 
 `update` is a method that takes one argument which is a callback. The callback takes the existing store value as its argument and returns the new value to be set to the store.
+
+`get` is a method which returns the current value of the store. Unlike the static [get](docs#get), it returns the value directly without subscribing and unsubscribing.
 
 ```js
 import { writable } from 'svelte/store';
@@ -271,6 +273,8 @@ count.subscribe(value => {
 count.set(1); // logs '1'
 
 count.update(n => n + 1); // logs '2'
+
+count.get(); // returns '2'
 ```
 
 ---
@@ -401,7 +405,9 @@ value: any = get(store)
 
 ---
 
-Generally, you should read the value of a store by subscribing to it and using the value as it changes over time. Occasionally, you may need to retrieve the value of a store to which you're not subscribed. `get` allows you to do so.
+Generally, you should read the value of a store by subscribing to it and using the value as it changes over time. Occasionally, you may need to retrieve the value of a store to which you're not subscribed, e.g. when sending its value to backend.
+
+All the svelte stores has the built-in `get` method which allows you to do so. For other cases (like custom stores with no `get` method) you can use this static `get` method.
 
 > This works by creating a subscription, reading the value, then unsubscribing. It's therefore not recommended in hot code paths.
 
